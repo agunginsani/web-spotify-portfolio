@@ -1,38 +1,21 @@
-# Welcome to Remix!
+# Overview
 
-- [Remix Docs](https://remix.run/docs)
+This repository contains my project to build a Spotify ripoff, showcasing my skills in web development and design. The goal of this project is to create a visually appealing and functional music streaming platform similar to Spotify, while incorporating my own creative touch.
 
-## Development
+# Features
 
-From your terminal:
+- Search and Discovery: Create a robust search functionality, allowing users to explore and discover new music based on genres, artists, or specific tracks.
 
-```sh
-npm run dev
-```
+# Technologies Used
 
-This starts your app in development mode, rebuilding assets on file changes.
+- React
+- Remix
+- TypeScript
+- Tailwind CSS
+- Bun
 
-## Deployment
+# How to Run
 
-First, build your app for production:
-
-```sh
-npm run build
-```
-
-Then run the app in production mode:
-
-```sh
-npm start
-```
-
-Now you'll need to pick a host to deploy it to.
-
-### DIY
-
-If you're familiar with deploying node applications, the built-in Remix app server is production-ready.
-
-Make sure to deploy the output of `remix build`
-
-- `build/`
-- `public/build/`
+1. Install [bun](https://bun.sh/)
+2. Run `bun install`
+3. Run `bun run dev`
