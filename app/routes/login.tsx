@@ -15,10 +15,12 @@ export async function loader({ request }: LoaderFunctionArgs) {
 }
 
 async function getToken() {
+  const clientId = z.string().parse(process.env.SPOTIFY_API_CLIENT_ID);
+  const clientSecret = z.string().parse(process.env.SPOTIFY_API_CLIENT_SECRET);
   const body = new URLSearchParams({
     grant_type: "client_credentials",
-    client_id: "b3ab4f5add084736b1dbf26ad1aff9b5",
-    client_secret: "1f10b0b50f894f1193e6750748ef7a31",
+    client_id: clientId,
+    client_secret: clientSecret,
   });
   const data = await fetch("https://accounts.spotify.com/api/token", {
     method: "POST",
