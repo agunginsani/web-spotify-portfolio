@@ -41,7 +41,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 
   const searchParams = new URL(request.url).searchParams;
   searchParams.set("q", query);
-  searchParams.set("type", type);
+  searchParams.set("type", type.slice(0, -1));
   searchParams.set("limit", limit.toString());
   searchParams.set("market", "ID");
 
