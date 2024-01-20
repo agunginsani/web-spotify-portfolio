@@ -37,11 +37,10 @@ const limit = 50;
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
   const query = z.string().parse(params.query);
-  const type = z.string().parse(params.type);
 
   const searchParams = new URL(request.url).searchParams;
   searchParams.set("q", query);
-  searchParams.set("type", type.slice(0, -1));
+  searchParams.set("type", "artist");
   searchParams.set("limit", limit.toString());
   searchParams.set("market", "ID");
 
@@ -143,6 +142,57 @@ export default function Route() {
     </>
   );
 }
+
+// function useInfiniteItems<T>({
+//   initialValues,
+//   initialOffset,
+// }: {
+//   initialValues: T[];
+//   initialOffset: number;
+// }) {
+//   const { load, ...fetcher } = useFetcher();
+//   const [infiniteItems, setInfiniteItems] = useState(initialValues);
+//   const [offset, setOffset] = useState(initialOffset);
+//   const observer = useRef<IntersectionObserver>();
+//   const searchInputRef = useRef<HTMLInputElement>(null);
+//   const lastItemRef = useCallback((node: HTMLLIElement) => {
+//     observer.current?.disconnect();
+//     observer.current = new IntersectionObserver((entries) => {
+//       if (entries[0].isIntersecting) {
+//         setOffset((prev) => prev + limit);
+//       }
+//     });
+
+//     if (node instanceof Element) {
+//       observer.current.observe(node);
+//     }
+//   }, []);
+
+//   useEffect(() => {
+//     if (fetcher.data) {
+//       const items = fetcher.data.artists.items;
+//       setInfiniteItems((prevs) => [...prevs, ...items]);
+//       if (fetcher.data.artists.next === null) observer.current?.disconnect();
+//     }
+//   }, [fetcher.data]);
+
+//   useEffect(() => {
+//     if (offset > artists.offset) {
+//       const searchParams = new URLSearchParams();
+//       searchParams.append("offset", offset.toString());
+//       searchParams.append("type", params.type!);
+//       searchParams.append("q", searchInputRef.current?.value ?? "");
+//       load(`?${searchParams}`);
+//     }
+//   }, [artists.offset, load, offset, params.type]);
+
+//   useEffect(() => {
+//     setOffset(0);
+//     setInfiniteItems(artists.items);
+//   }, [artists.items]);
+
+//   return { infiniteItems, lastItemRef };
+// }
 
 type ArtistCard = {
   id: string;
