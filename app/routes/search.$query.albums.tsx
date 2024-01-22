@@ -138,7 +138,11 @@ export default function Route() {
           const [year] = item.release_date.split("-");
           const [artist] = item.artists;
           return infiniteItems.length === index + 1 ? (
-            <li ref={lastItemRef} key={item.id} className="flex lg:w-auto">
+            <li
+              ref={lastItemRef}
+              key={item.id}
+              className="flex w-full overflow-hidden lg:w-auto"
+            >
               <AlbumCard
                 id={item.id}
                 year={year}
@@ -148,7 +152,7 @@ export default function Route() {
               />
             </li>
           ) : (
-            <li key={item.id} className="flex lg:w-auto">
+            <li key={item.id} className="flex w-full overflow-hidden lg:w-auto">
               <AlbumCard
                 id={item.id}
                 year={year}
@@ -176,7 +180,7 @@ type AlbumCard = {
 function AlbumCard({ avatar, name, year, artist }: AlbumCard) {
   const size = 150;
   return (
-    <button className="flex w-full items-center gap-1 bg-gray-800 p-3 hover:bg-gray-700 lg:w-[175px] lg:flex-col lg:rounded-lg">
+    <button className="flex w-full items-center gap-1 overflow-hidden bg-gray-800 p-3 hover:bg-gray-700 lg:w-[175px] lg:flex-col lg:rounded-lg">
       {avatar === null ? (
         <div className="mr-2 h-full max-h-12 w-full max-w-12 rounded-lg lg:mr-0 lg:max-h-[140px] lg:max-w-[140px]" />
       ) : (
@@ -199,8 +203,8 @@ function AlbumCard({ avatar, name, year, artist }: AlbumCard) {
       </div>
 
       {/* Small screen. */}
-      <div className="w-full overflow-hidden lg:hidden">
-        <div className="overflow-hidden text-ellipsis text-nowrap text-left font-bold">
+      <div className="overflow-hidden lg:hidden">
+        <div className="overflow-hidden text-ellipsis whitespace-nowrap text-nowrap text-left font-bold">
           {name}
         </div>
         <div className="text-left text-sm text-slate-500">

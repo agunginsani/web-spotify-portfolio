@@ -128,11 +128,15 @@ export default function Route() {
         {infiniteItems.map((item, index) => {
           const avatar = item.images.length === 0 ? null : item.images[0].url;
           return infiniteItems.length === index + 1 ? (
-            <li ref={lastItemRef} key={item.id} className="flex lg:w-auto">
+            <li
+              ref={lastItemRef}
+              key={item.id}
+              className="flex w-full overflow-hidden lg:w-auto"
+            >
               <ArtistCard id={item.id} name={item.name} avatar={avatar} />
             </li>
           ) : (
-            <li key={item.id} className="flex lg:w-auto">
+            <li key={item.id} className="flex w-full overflow-hidden lg:w-auto">
               <ArtistCard id={item.id} name={item.name} avatar={avatar} />
             </li>
           );
@@ -152,7 +156,7 @@ type ArtistCard = {
 function ArtistCard({ avatar, name }: ArtistCard) {
   const size = 150;
   return (
-    <button className="h-ful flex w-full flex-row items-center gap-1 rounded-none bg-gray-800 p-3 hover:bg-gray-700 lg:w-[175px] lg:flex-col lg:rounded-lg">
+    <button className="h-ful flex w-full flex-row items-center gap-1 overflow-hidden rounded-none bg-gray-800 p-3 hover:bg-gray-700 lg:w-[175px] lg:flex-col lg:rounded-lg">
       {avatar === null ? (
         <div className="mr-2 h-full max-h-12 w-full max-w-12 rounded-full lg:mr-0 lg:max-h-[140px] lg:max-w-[140px]" />
       ) : (
@@ -173,8 +177,8 @@ function ArtistCard({ avatar, name }: ArtistCard) {
       </div>
 
       {/* Small screen. */}
-      <div className="w-full overflow-hidden lg:hidden">
-        <div className="overflow-hidden text-ellipsis text-nowrap text-left font-bold">
+      <div className="overflow-hidden lg:hidden">
+        <div className="overflow-hidden text-ellipsis whitespace-nowrap text-nowrap text-left font-bold">
           {name}
         </div>
         <div className="text-left text-sm text-slate-500">Artist</div>
