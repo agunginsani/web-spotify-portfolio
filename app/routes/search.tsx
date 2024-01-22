@@ -31,11 +31,11 @@ export default function Route() {
   return (
     <div
       ref={wrapperRef}
-      className="mx-auto h-[calc(100svh_-_theme(spacing.6))] w-full max-w-screen-md overflow-auto rounded-lg bg-slate-900 px-4"
+      className="xs:bg-black mx-auto h-[calc(100svh_-_theme(spacing.6))] w-full max-w-screen-md overflow-auto rounded-lg sm:bg-slate-900"
     >
-      <div className="sticky top-0 flex flex-col bg-slate-900 py-4">
+      <div className="sticky top-0 flex flex-col bg-slate-900 p-4">
         <input
-          className="md:w-96 sm:w-full rounded-full bg-gray-700 px-5 py-3 text-white outline-white"
+          className="rounded-full bg-gray-700 px-5 py-3 text-white outline-white sm:w-96"
           ref={searchInputRef}
           type="search"
           name="q"
@@ -49,7 +49,9 @@ export default function Route() {
         />
         {params.query ? <SearchFilters /> : null}
       </div>
-      <Outlet />
+      <div className="lg:px-4">
+        <Outlet />
+      </div>
     </div>
   );
 }
@@ -64,12 +66,12 @@ function SearchFilters() {
     { param: "playlists", label: "Playlists" },
   ];
   return (
-    <div className="mt-3 overflow-auto flex gap-4">
+    <div className="mt-3 flex gap-4 overflow-auto">
       {items.map((item) => (
         <NavLink key={item.param} to={`${params.query}/${item.param}`}>
           {({ isActive }) => (
             <div
-              className={clsx("p-2 text-sm text-nowrap rounded-full", {
+              className={clsx("text-nowrap rounded-full p-2 text-sm", {
                 "bg-slate-700 text-white": !isActive,
                 "bg-white text-black": isActive,
               })}
