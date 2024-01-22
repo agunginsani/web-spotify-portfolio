@@ -124,15 +124,15 @@ export default function Route() {
 
   return (
     <>
-      <ul className="flex flex-wrap justify-between gap-3 text-white">
+      <ul className="flex flex-col flex-wrap justify-between gap-0 text-white lg:flex-row lg:justify-between lg:gap-3">
         {infiniteItems.map((item, index) => {
           const avatar = item.images.length === 0 ? null : item.images[0].url;
           return infiniteItems.length === index + 1 ? (
-            <li ref={lastItemRef} key={item.id}>
+            <li ref={lastItemRef} key={item.id} className="flex lg:w-auto">
               <ArtistCard id={item.id} name={item.name} avatar={avatar} />
             </li>
           ) : (
-            <li key={item.id}>
+            <li key={item.id} className="flex lg:w-auto">
               <ArtistCard id={item.id} name={item.name} avatar={avatar} />
             </li>
           );
@@ -152,21 +152,31 @@ type ArtistCard = {
 function ArtistCard({ avatar, name }: ArtistCard) {
   const size = 150;
   return (
-    <button className="flex h-full w-[175px] flex-col items-center gap-1 rounded-lg bg-gray-800 p-3 hover:bg-gray-700">
+    <button className="h-ful flex w-full flex-row items-center gap-1 rounded-none bg-gray-800 p-3 hover:bg-gray-700 lg:w-[175px] lg:flex-col lg:rounded-lg">
       {avatar === null ? (
-        <div className="h-[140px] rounded-full object-cover" />
+        <div className="mr-2 h-[140px] rounded-full lg:mr-0" />
       ) : (
         <img
           src={avatar}
           alt=""
           role="presentation"
-          className="h-full max-h-[140px] max-w-[140px] rounded-full object-cover"
+          className="mr-2 h-full max-h-12 w-full max-w-12 rounded-full object-cover lg:mr-0 lg:max-h-[140px] lg:max-w-[140px]"
           width={size}
           height={size}
         />
       )}
-      <div className="w-full text-left font-bold">{name}</div>
-      <div className="w-full text-left text-sm text-slate-500">Artist</div>
+
+      {/* Large screen. */}
+      <div className="hidden w-full text-left font-bold lg:block">{name}</div>
+      <div className="hidden w-full text-left text-sm text-slate-500 lg:block">
+        Artist
+      </div>
+
+      {/* Small screen. */}
+      <div className="lg:hidden">
+        <div className="w-full text-left font-bold">{name}</div>
+        <div className="w-full text-left text-sm text-slate-500">Artist</div>
+      </div>
     </button>
   );
 }
