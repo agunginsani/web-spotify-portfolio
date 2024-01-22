@@ -124,7 +124,7 @@ export default function Route() {
 
   return (
     <>
-      <ul className="flex flex-col flex-wrap justify-between gap-0 text-white lg:flex-row lg:justify-between lg:gap-3">
+      <ul className="flex flex-col flex-wrap justify-between gap-0 text-white lg:flex-row lg:gap-3">
         {infiniteItems.map((item, index) => {
           const avatar = item.images.length === 0 ? null : item.images[0].url;
           return infiniteItems.length === index + 1 ? (
@@ -154,7 +154,7 @@ function ArtistCard({ avatar, name }: ArtistCard) {
   return (
     <button className="h-ful flex w-full flex-row items-center gap-1 rounded-none bg-gray-800 p-3 hover:bg-gray-700 lg:w-[175px] lg:flex-col lg:rounded-lg">
       {avatar === null ? (
-        <div className="mr-2 h-[140px] rounded-full lg:mr-0" />
+        <div className="mr-2 h-full max-h-12 w-full max-w-12 rounded-full lg:mr-0 lg:max-h-[140px] lg:max-w-[140px]" />
       ) : (
         <img
           src={avatar}
@@ -173,9 +173,11 @@ function ArtistCard({ avatar, name }: ArtistCard) {
       </div>
 
       {/* Small screen. */}
-      <div className="lg:hidden">
-        <div className="w-full text-left font-bold">{name}</div>
-        <div className="w-full text-left text-sm text-slate-500">Artist</div>
+      <div className="w-full overflow-hidden lg:hidden">
+        <div className="overflow-hidden text-ellipsis text-nowrap text-left font-bold">
+          {name}
+        </div>
+        <div className="text-left text-sm text-slate-500">Artist</div>
       </div>
     </button>
   );
