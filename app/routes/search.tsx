@@ -17,6 +17,8 @@ export default function Route() {
   const navigation = useNavigate();
   const params = useParams();
   const location = useLocation();
+  const pathnames = location.pathname.split("/").filter(Boolean);
+  const type = pathnames.length > 2 ? pathnames[2] : "artists";
   const wrapperRef = useRef<HTMLDivElement>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
 
@@ -24,7 +26,7 @@ export default function Route() {
     wrapperRef.current?.scrollTo({ top: 0 });
     if (searchInputRef.current)
       searchInputRef.current.value = params.query ?? "";
-  }, [params.query]);
+  }, [params.query, type]);
 
   return (
     <div
@@ -40,8 +42,6 @@ export default function Route() {
           placeholder="What do you want to listen to?"
           defaultValue={params.query ?? ""}
           onChange={(e) => {
-            const pathnames = location.pathname.split("/").filter(Boolean);
-            const type = pathnames.length > 2 ? pathnames[2] : "artists";
             const { value } = e.currentTarget;
             if (value === "") return navigation("");
             navigation(`${value}/${type}`);
