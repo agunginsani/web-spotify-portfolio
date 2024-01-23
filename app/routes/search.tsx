@@ -34,7 +34,7 @@ export default function Route() {
       className="mx-auto h-[calc(100svh_-_theme(spacing.6))] w-full max-w-screen-md overflow-auto rounded-lg bg-black sm:bg-slate-900"
     >
       <div className="sticky top-0 flex flex-col bg-slate-900">
-        <div className="px-4 pt-4">
+        <div className="p-4">
           <input
             className="w-full rounded-full bg-gray-700 px-5 py-3 text-white outline-white lg:w-96"
             ref={searchInputRef}
@@ -68,7 +68,7 @@ function SearchFilters() {
     { param: "playlists", label: "Playlists" },
   ];
   return (
-    <div className="mt-3 flex gap-4 overflow-auto pb-4">
+    <div className="flex gap-4 overflow-auto pb-4">
       <div />
       {items.map((item) => (
         <NavLink key={item.param} to={`${params.query}/${item.param}`}>
