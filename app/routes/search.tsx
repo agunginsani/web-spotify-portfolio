@@ -31,22 +31,24 @@ export default function Route() {
   return (
     <div
       ref={wrapperRef}
-      className="xs:bg-black mx-auto h-[calc(100svh_-_theme(spacing.6))] w-full max-w-screen-md overflow-auto rounded-lg sm:bg-slate-900"
+      className="mx-auto h-[calc(100svh_-_theme(spacing.6))] w-full max-w-screen-md overflow-auto rounded-lg bg-black sm:bg-slate-900"
     >
-      <div className="sticky top-0 flex flex-col bg-slate-900 p-4">
-        <input
-          className="rounded-full bg-gray-700 px-5 py-3 text-white outline-white lg:w-96"
-          ref={searchInputRef}
-          type="search"
-          name="q"
-          placeholder="What do you want to listen to?"
-          defaultValue={params.query ?? ""}
-          onChange={(e) => {
-            const { value } = e.currentTarget;
-            if (value === "") return navigation("");
-            navigation(`${value}/${type}`);
-          }}
-        />
+      <div className="sticky top-0 flex flex-col bg-slate-900">
+        <div className="px-4 pt-4">
+          <input
+            className="w-full rounded-full bg-gray-700 px-5 py-3 text-white outline-white lg:w-96"
+            ref={searchInputRef}
+            type="search"
+            name="q"
+            placeholder="What do you want to listen to?"
+            defaultValue={params.query ?? ""}
+            onChange={(e) => {
+              const { value } = e.currentTarget;
+              if (value === "") return navigation("");
+              navigation(`${value}/${type}`);
+            }}
+          />
+        </div>
         {params.query ? <SearchFilters /> : null}
       </div>
       <div className="lg:px-4">
@@ -66,7 +68,8 @@ function SearchFilters() {
     { param: "playlists", label: "Playlists" },
   ];
   return (
-    <div className="mt-3 flex gap-4 overflow-auto">
+    <div className="mt-3 flex gap-4 overflow-auto pb-4">
+      <div />
       {items.map((item) => (
         <NavLink key={item.param} to={`${params.query}/${item.param}`}>
           {({ isActive }) => (
@@ -81,6 +84,7 @@ function SearchFilters() {
           )}
         </NavLink>
       ))}
+      <div />
     </div>
   );
 }
