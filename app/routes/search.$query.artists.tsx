@@ -1,5 +1,6 @@
 import type { LoaderFunctionArgs } from "@remix-run/node";
 import {
+  defer,
   isRouteErrorResponse,
   useFetcher,
   useLoaderData,
@@ -44,79 +45,53 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   searchParams.set("limit", limit.toString());
   searchParams.set("market", "ID");
 
-  const response = await client(
+  const response = client(
     request,
     `https://api.spotify.com/v1/search?${searchParams}`,
-  );
-
-  if (response.ok) {
-    const data = schema.parse(await response.json());
-    return data;
-  }
-
-  if (response.status === 400) {
-    return {
-      artists: {
+  ).then(async (response) => {
+    if (response.ok) {
+      const data = schema.parse(await response.json());
+      return data.artists;
+    }
+    if (response.status === 400) {
+      return {
         items: [],
         offset: 0,
         limit: 0,
         previous: null,
         next: null,
         total: 0,
-      },
-    } satisfies z.infer<typeof schema>;
-  }
+      } satisfies z.infer<typeof schema>["artists"];
+    }
+    throw response;
+  });
 
-  throw response;
+  // if (response.ok) {
+  //   const data = schema.parse(await response.json());
+  //   return data;
+  // }
+
+  // if (response.status === 400) {
+  //   return {
+  //     artists: {
+  //       items: [],
+  //       offset: 0,
+  //       limit: 0,
+  //       previous: null,
+  //       next: null,
+  //       total: 0,
+  //     },
+  //   } satisfies z.infer<typeof schema>;
+  // }
+
+  // throw response;
+
+  return defer({ artists: response });
 }
 
 export default function Route() {
-  const data = useLoaderData<typeof loader>();
-  const artists = data.artists;
-  const params = useParams();
-
   const error = useRouteError();
-  const { load, ...fetcher } = useFetcher<z.infer<typeof schema>>();
-
-  const [infiniteItems, setInfiniteItems] = useState(artists.items);
-  const [offset, setOffset] = useState(artists.offset);
-  const observer = useRef<IntersectionObserver>();
-  const searchInputRef = useRef<HTMLInputElement>(null);
-  const lastItemRef = useCallback((node: HTMLLIElement) => {
-    observer.current?.disconnect();
-    observer.current = new IntersectionObserver((entries) => {
-      if (entries[0].isIntersecting) {
-        setOffset((prev) => prev + limit);
-      }
-    });
-
-    if (node instanceof Element) {
-      observer.current.observe(node);
-    }
-  }, []);
-
-  useEffect(() => {
-    if (fetcher.data) {
-      const items = fetcher.data.artists.items;
-      setInfiniteItems((prevs) => [...prevs, ...items]);
-      if (fetcher.data.artists.next === null) observer.current?.disconnect();
-    }
-  }, [fetcher.data]);
-
-  useEffect(() => {
-    if (offset > artists.offset) {
-      const searchParams = new URLSearchParams();
-      searchParams.append("offset", offset.toString());
-      searchParams.append("type", params.type!);
-      searchParams.append("q", searchInputRef.current?.value ?? "");
-      load(`?${searchParams}`);
-    }
-  }, [artists.offset, load, offset, params.type]);
-
-  useEffect(() => {
-    setOffset(0);
-    setInfiniteItems(artists.items);
-  }, [artists.items]);
+  const { infiniteItems, fetcher, lastItemRef } = useInfiniteItems();
 
   if (isRouteErrorResponse(error)) {
     return <div>{error.data}</div>;
@@ -127,16 +102,17 @@ export default function Route() {
       <ul className="flex flex-col flex-wrap justify-between gap-0 text-white lg:flex-row lg:gap-3">
         {infiniteItems.map((item, index) => {
           const avatar = item.images.length === 0 ? null : item.images[0].url;
+          const key = `${item.id}_${index}`;
           return infiniteItems.length === index + 1 ? (
             <li
               ref={lastItemRef}
-              key={item.id}
+              key={key}
               className="flex w-full overflow-hidden lg:w-auto"
             >
               <ArtistCard id={item.id} name={item.name} avatar={avatar} />
             </li>
           ) : (
-            <li key={item.id} className="flex w-full overflow-hidden lg:w-auto">
+            <li key={key} className="flex w-full overflow-hidden lg:w-auto">
               <ArtistCard id={item.id} name={item.name} avatar={avatar} />
             </li>
           );
@@ -185,4 +161,57 @@ function ArtistCard({ avatar, name }: ArtistCard) {
       </div>
     </button>
   );
+}
+
+type ArtistItems = z.infer<typeof schema>["artists"]["items"];
+
+function useInfiniteItems() {
+  const data = useLoaderData<typeof loader>();
+  const initialOffset = 0;
+  const params = useParams();
+  const { load, ...fetcher } = useFetcher<typeof loader>();
+  const [infiniteItems, setInfiniteItems] = useState<ArtistItems>([]);
+  const [offset, setOffset] = useState(initialOffset);
+  const observer = useRef<IntersectionObserver>();
+  const searchInputRef = useRef<HTMLInputElement>(null);
+  const lastItemRef = useCallback((node: HTMLLIElement) => {
+    observer.current?.disconnect();
+    observer.current = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting) {
+        setOffset((prev) => prev + limit);
+      }
+    });
+
+    if (node instanceof Element) {
+      observer.current.observe(node);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (fetcher.data) {
+      Promise.resolve(fetcher.data.artists).then(({ items, next }) => {
+        setInfiniteItems((prevs) => [...prevs, ...items]);
+        if (next === null) observer.current?.disconnect();
+      });
+    }
+  }, [fetcher.data]);
+
+  useEffect(() => {
+    if (offset > initialOffset) {
+      const searchParams = new URLSearchParams();
+      searchParams.append("offset", offset.toString());
+      searchParams.append("type", params.type!);
+      searchParams.append("q", searchInputRef.current?.value ?? "");
+      load(`?${searchParams}`);
+    }
+  }, [initialOffset, load, offset, params.type]);
+
+  useEffect(() => {
+    data.artists.then((artist) => {
+      setOffset(0);
+      setInfiniteItems(artist.items);
+    });
+  }, [data]);
+
+  return { infiniteItems, fetcher, lastItemRef };
 }
