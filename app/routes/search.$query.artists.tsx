@@ -66,26 +66,6 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
     throw response;
   });
 
-  // if (response.ok) {
-  //   const data = schema.parse(await response.json());
-  //   return data;
-  // }
-
-  // if (response.status === 400) {
-  //   return {
-  //     artists: {
-  //       items: [],
-  //       offset: 0,
-  //       limit: 0,
-  //       previous: null,
-  //       next: null,
-  //       total: 0,
-  //     },
-  //   } satisfies z.infer<typeof schema>;
-  // }
-
-  // throw response;
-
   return defer({ artists: response });
 }
 
