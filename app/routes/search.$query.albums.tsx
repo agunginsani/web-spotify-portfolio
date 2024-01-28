@@ -1,5 +1,6 @@
 import type { LoaderFunctionArgs } from "@remix-run/node";
 import {
+  Await,
   defer,
   isRouteErrorResponse,
   useFetcher,
@@ -7,7 +8,7 @@ import {
   useParams,
   useRouteError,
 } from "@remix-run/react";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { Suspense, useCallback, useEffect, useRef, useState } from "react";
 import { z } from "zod";
 import { client } from "~/helpers/network";
 
@@ -78,49 +79,60 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 }
 
 export default function Route() {
+  const data = useLoaderData<typeof loader>();
   const error = useRouteError();
-  const { infiniteItems, fetcher, lastItemRef } = useInfiniteItems();
+  const { loadMoreItems, lastItemRef } = useInfiniteItems();
 
   if (isRouteErrorResponse(error)) {
     return <div>{error.data}</div>;
   }
 
   return (
-    <>
-      <ul className="flex flex-col flex-wrap justify-between gap-0 text-white lg:flex-row lg:gap-3">
-        {infiniteItems.map((item, index) => {
-          const avatar = item.images.length === 0 ? null : item.images[0].url;
-          const [year] = item.release_date.split("-");
-          const [artist] = item.artists;
-          return infiniteItems.length === index + 1 ? (
-            <li
-              ref={lastItemRef}
-              key={item.id}
-              className="flex w-full overflow-hidden lg:w-auto"
-            >
-              <AlbumCard
-                id={item.id}
-                year={year}
-                name={item.name}
-                avatar={avatar}
-                artist={artist.name}
-              />
-            </li>
-          ) : (
-            <li key={item.id} className="flex w-full overflow-hidden lg:w-auto">
-              <AlbumCard
-                id={item.id}
-                year={year}
-                name={item.name}
-                avatar={avatar}
-                artist={artist.name}
-              />
-            </li>
+    <Suspense fallback={null}>
+      <Await resolve={data.albums}>
+        {(album) => {
+          const items = [...album.items, ...loadMoreItems];
+          return (
+            <ul className="flex flex-col flex-wrap justify-between gap-0 text-white lg:flex-row lg:gap-3">
+              {items.map((item, index) => {
+                const avatar =
+                  item.images.length === 0 ? null : item.images[0].url;
+                const [year] = item.release_date.split("-");
+                const [artist] = item.artists;
+                return items.length === index + 1 ? (
+                  <li
+                    ref={lastItemRef}
+                    key={item.id}
+                    className="flex w-full overflow-hidden lg:w-auto"
+                  >
+                    <AlbumCard
+                      id={item.id}
+                      year={year}
+                      name={item.name}
+                      avatar={avatar}
+                      artist={artist.name}
+                    />
+                  </li>
+                ) : (
+                  <li
+                    key={item.id}
+                    className="flex w-full overflow-hidden lg:w-auto"
+                  >
+                    <AlbumCard
+                      id={item.id}
+                      year={year}
+                      name={item.name}
+                      avatar={avatar}
+                      artist={artist.name}
+                    />
+                  </li>
+                );
+              })}
+            </ul>
           );
-        })}
-      </ul>
-      {fetcher.state === "loading" ? <div>Loading...</div> : null}
-    </>
+        }}
+      </Await>
+    </Suspense>
   );
 }
 
@@ -173,11 +185,10 @@ function AlbumCard({ avatar, name, year, artist }: AlbumCard) {
 type AlbumItems = z.infer<typeof schema>["albums"]["items"];
 
 function useInfiniteItems() {
-  const data = useLoaderData<typeof loader>();
-  const initialOffset = 0;
+  const initialOffset = limit;
   const params = useParams();
   const { load, ...fetcher } = useFetcher<typeof loader>();
-  const [infiniteItems, setInfiniteItems] = useState<AlbumItems>([]);
+  const [loadMoreItems, setInfiniteItems] = useState<AlbumItems>([]);
   const [offset, setOffset] = useState(initialOffset);
   const observer = useRef<IntersectionObserver>();
   const searchInputRef = useRef<HTMLInputElement>(null);
@@ -213,12 +224,5 @@ function useInfiniteItems() {
     }
   }, [initialOffset, load, offset, params.type]);
 
-  useEffect(() => {
-    data.albums.then((album) => {
-      setOffset(0);
-      setInfiniteItems(album.items);
-    });
-  }, [data]);
-
-  return { infiniteItems, fetcher, lastItemRef };
+  return { loadMoreItems, lastItemRef };
 }

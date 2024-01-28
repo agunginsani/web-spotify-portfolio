@@ -1,5 +1,6 @@
 import type { LoaderFunctionArgs } from "@remix-run/node";
 import {
+  Await,
   defer,
   isRouteErrorResponse,
   useFetcher,
@@ -7,7 +8,7 @@ import {
   useParams,
   useRouteError,
 } from "@remix-run/react";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { Suspense, useCallback, useEffect, useRef, useState } from "react";
 import { z } from "zod";
 import { client } from "~/helpers/network";
 
@@ -70,36 +71,47 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 }
 
 export default function Route() {
+  const data = useLoaderData<typeof loader>();
   const error = useRouteError();
-  const { infiniteItems, fetcher, lastItemRef } = useInfiniteItems();
+  const { loadMoreItems, lastItemRef } = useLoadMoreItems();
 
   if (isRouteErrorResponse(error)) {
     return <div>{error.data}</div>;
   }
 
   return (
-    <>
-      <ul className="flex flex-col flex-wrap justify-between gap-0 text-white lg:flex-row lg:gap-3">
-        {infiniteItems.map((item, index) => {
-          const avatar = item.images.length === 0 ? null : item.images[0].url;
-          const key = `${item.id}_${index}`;
-          return infiniteItems.length === index + 1 ? (
-            <li
-              ref={lastItemRef}
-              key={key}
-              className="flex w-full overflow-hidden lg:w-auto"
-            >
-              <ArtistCard id={item.id} name={item.name} avatar={avatar} />
-            </li>
-          ) : (
-            <li key={key} className="flex w-full overflow-hidden lg:w-auto">
-              <ArtistCard id={item.id} name={item.name} avatar={avatar} />
-            </li>
+    <Suspense fallback={null}>
+      <Await resolve={data.artists}>
+        {(artist) => {
+          const items = [...artist.items, ...loadMoreItems];
+          return (
+            <ul className="flex flex-col flex-wrap justify-between gap-0 text-white lg:flex-row lg:gap-3">
+              {items.map((item, index) => {
+                const avatar =
+                  item.images.length === 0 ? null : item.images[0].url;
+                const key = `${item.id}_${index}`;
+                return items.length === index + 1 ? (
+                  <li
+                    ref={lastItemRef}
+                    key={key}
+                    className="flex w-full overflow-hidden lg:w-auto"
+                  >
+                    <ArtistCard id={item.id} name={item.name} avatar={avatar} />
+                  </li>
+                ) : (
+                  <li
+                    key={key}
+                    className="flex w-full overflow-hidden lg:w-auto"
+                  >
+                    <ArtistCard id={item.id} name={item.name} avatar={avatar} />
+                  </li>
+                );
+              })}
+            </ul>
           );
-        })}
-      </ul>
-      {fetcher.state === "loading" ? <div>Loading...</div> : null}
-    </>
+        }}
+      </Await>
+    </Suspense>
   );
 }
 
@@ -145,12 +157,11 @@ function ArtistCard({ avatar, name }: ArtistCard) {
 
 type ArtistItems = z.infer<typeof schema>["artists"]["items"];
 
-function useInfiniteItems() {
-  const data = useLoaderData<typeof loader>();
-  const initialOffset = 0;
+function useLoadMoreItems() {
+  const initialOffset = limit;
   const params = useParams();
   const { load, ...fetcher } = useFetcher<typeof loader>();
-  const [infiniteItems, setInfiniteItems] = useState<ArtistItems>([]);
+  const [loadMoreItems, setLoadMoreItems] = useState<ArtistItems>([]);
   const [offset, setOffset] = useState(initialOffset);
   const observer = useRef<IntersectionObserver>();
   const searchInputRef = useRef<HTMLInputElement>(null);
@@ -170,7 +181,7 @@ function useInfiniteItems() {
   useEffect(() => {
     if (fetcher.data) {
       Promise.resolve(fetcher.data.artists).then(({ items, next }) => {
-        setInfiniteItems((prevs) => [...prevs, ...items]);
+        setLoadMoreItems((prevs) => [...prevs, ...items]);
         if (next === null) observer.current?.disconnect();
       });
     }
@@ -186,12 +197,8 @@ function useInfiniteItems() {
     }
   }, [initialOffset, load, offset, params.type]);
 
-  useEffect(() => {
-    data.artists.then((artist) => {
-      setOffset(0);
-      setInfiniteItems(artist.items);
-    });
-  }, [data]);
-
-  return { infiniteItems, fetcher, lastItemRef };
+  return {
+    loadMoreItems,
+    lastItemRef,
+  };
 }
