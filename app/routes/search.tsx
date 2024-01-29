@@ -62,10 +62,10 @@ function SearchFilters() {
   const params = useParams();
   const items = [
     { param: "artists", label: "Artists" },
-    { param: "tracks", label: "Songs" },
-    { param: "shows", label: "Podcasts & Shows" },
+    // { param: "tracks", label: "Songs" },
+    // { param: "shows", label: "Podcasts & Shows" },
     { param: "albums", label: "Albums" },
-    { param: "playlists", label: "Playlists" },
+    // { param: "playlists", label: "Playlists" },
   ];
   return (
     <div className="flex gap-4 overflow-auto pb-4">
