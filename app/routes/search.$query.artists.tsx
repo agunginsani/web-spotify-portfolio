@@ -10,6 +10,7 @@ import {
 } from "@remix-run/react";
 import { Suspense, useCallback, useEffect, useRef, useState } from "react";
 import { z } from "zod";
+import { ErrorElement } from "~/feature/search/component";
 import { client } from "~/helpers/network";
 
 const schema = z.object({
@@ -81,7 +82,7 @@ export default function Route() {
 
   return (
     <Suspense fallback={null}>
-      <Await resolve={data.artists}>
+      <Await resolve={data.artists} errorElement={<ErrorElement />}>
         {(artist) => {
           const items = [...artist.items, ...loadMoreItems];
           return (

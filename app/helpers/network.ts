@@ -1,10 +1,9 @@
-import { redirect } from "@remix-run/node";
 import { credentials } from "~/cookies.server";
 
 export async function client(
   request: Request,
   input: Parameters<typeof fetch>[0],
-  init?: Parameters<typeof fetch>[1]
+  init?: Parameters<typeof fetch>[1],
 ): Promise<Response> {
   const cookieHeader = request.headers.get("Cookie");
   const cookie = (await credentials.parse(cookieHeader)) ?? {};
@@ -16,10 +15,6 @@ export async function client(
     },
     ...restInit,
   });
-
-  if (response.status === 401) {
-    throw redirect("/login");
-  }
 
   return response;
 }
