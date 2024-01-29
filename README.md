@@ -5,6 +5,7 @@ This repository contains my project to build a Spotify ripoff, showcasing my ski
 # Features
 
 - Search and Discovery: Create a robust search functionality, allowing users to explore and discover new music based on genres, artists, or specific tracks.
+- Responsive Design: Implement a responsive design to ensure an optimal viewing and listening experience across various devices, from desktops to smartphones.
 
 # Technologies Used
 
