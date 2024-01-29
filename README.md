@@ -32,6 +32,7 @@ Add your Spotify API keys to the `.env` file:
 ```env
 SPOTIFY_API_CLIENT_ID=your_client_id
 SPOTIFY_API_CLIENT_SECRET=your_client_secret
+COOKIE_CREDENTIALS_SECRET=your_cookie_secret
 ```
 
 ## 4. Install Dependencies
