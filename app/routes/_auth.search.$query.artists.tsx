@@ -11,7 +11,7 @@ import {
 import { Suspense, useCallback, useEffect, useRef, useState } from "react";
 import { z } from "zod";
 import { ErrorElement } from "~/feature/search/component";
-import { client } from "~/helpers/network";
+import { client } from "~/helpers/network.server";
 
 const schema = z.object({
   artists: z.object({
