@@ -1,4 +1,4 @@
-import { credentials } from "~/cookies.server";
+import { credentials } from "~/helpers/cookies.server";
 
 export async function client(
   request: Request,
@@ -15,6 +15,5 @@ export async function client(
     },
     ...restInit,
   });
-
   return response;
 }

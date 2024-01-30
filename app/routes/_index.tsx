@@ -1,5 +1,5 @@
 import { LoaderFunctionArgs, redirect } from "@remix-run/node";
-import { credentials } from "~/cookies.server";
+import { credentials } from "~/helpers/cookies.server";
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const cookieHeader = request.headers.get("Cookie");
