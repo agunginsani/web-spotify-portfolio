@@ -51,7 +51,7 @@ export default function Route() {
         </div>
         {params.query ? <SearchFilters /> : null}
       </div>
-      <div className="pb-4 lg:px-4" key={location.pathname}>
+      <div className="lg:px-4 lg:pb-4" key={location.pathname}>
         <Outlet />
       </div>
     </div>
