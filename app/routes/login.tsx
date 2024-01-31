@@ -6,8 +6,13 @@ export async function loader({ request }: LoaderFunctionArgs) {
   const cookieHeader = request.headers.get("Cookie");
   const cookie = (await credentials.parse(cookieHeader)) || {};
   const token = await getToken();
+  const referer = z
+    .string()
+    .url()
+    .catch("/")
+    .parse(request.headers.get("Referer"));
   cookie.access_token = token;
-  return redirect("/", {
+  return redirect(referer, {
     headers: {
       "Set-Cookie": await credentials.serialize(cookie),
     },

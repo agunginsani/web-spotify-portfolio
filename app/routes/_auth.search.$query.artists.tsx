@@ -86,7 +86,7 @@ export default function Route() {
         {(artist) => {
           const items = [...artist.items, ...loadMoreItems];
           return (
-            <ul className="flex flex-col flex-wrap justify-between gap-0 text-white lg:flex-row lg:gap-3">
+            <ul className="flex flex-col flex-wrap justify-between gap-0 lg:flex-row lg:gap-3">
               {items.map((item, index) => {
                 const avatar =
                   item.images.length === 0 ? null : item.images[0].url;

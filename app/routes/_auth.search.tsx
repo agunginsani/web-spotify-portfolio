@@ -36,7 +36,7 @@ export default function Route() {
       <div className="sticky top-0 flex flex-col bg-slate-900">
         <div className="p-4">
           <input
-            className="w-full rounded-full bg-gray-700 px-5 py-3 text-white outline-white lg:w-96"
+            className="w-full rounded-full bg-gray-700 px-5 py-3 outline-white lg:w-96"
             ref={searchInputRef}
             type="search"
             name="q"
