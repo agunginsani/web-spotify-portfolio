@@ -10,8 +10,8 @@ import {
 } from "@remix-run/react";
 import { Suspense, useCallback, useEffect, useRef, useState } from "react";
 import { z } from "zod";
-import { ErrorElement } from "~/routes/_auth.search/components";
 import { client } from "~/helpers/network.server";
+import { ErrorElement } from "~/routes/_auth.search/components";
 
 const schema = z.object({
   albums: z.object({

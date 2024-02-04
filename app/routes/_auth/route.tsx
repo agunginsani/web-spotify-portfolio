@@ -1,5 +1,5 @@
-import { Outlet } from "@remix-run/react";
 import { LoaderFunctionArgs, redirect } from "@remix-run/node";
+import { Outlet } from "@remix-run/react";
 import { credentials } from "~/helpers/cookies.server";
 
 export async function loader({ request }: LoaderFunctionArgs) {
