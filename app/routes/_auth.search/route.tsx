@@ -19,20 +19,15 @@ export default function Route() {
   const location = useLocation();
   const pathnames = location.pathname.split("/").filter(Boolean);
   const type = pathnames.length > 2 ? pathnames[2] : "artists";
-  const wrapperRef = useRef<HTMLDivElement>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    wrapperRef.current?.scrollTo({ top: 0 });
     if (searchInputRef.current)
       searchInputRef.current.value = params.query ?? "";
   }, [params.query, type]);
 
   return (
-    <div
-      ref={wrapperRef}
-      className="mx-auto h-[calc(100svh_-_theme(spacing.6))] w-full max-w-screen-md overflow-auto rounded-lg bg-black sm:bg-slate-900"
-    >
+    <>
       <div className="sticky top-0 flex flex-col bg-slate-900">
         <div className="p-4">
           <input
@@ -54,7 +49,7 @@ export default function Route() {
       <div className="lg:px-4 lg:pb-4" key={location.pathname}>
         <Outlet />
       </div>
-    </div>
+    </>
   );
 }
 
