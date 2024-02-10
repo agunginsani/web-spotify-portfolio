@@ -10,5 +10,9 @@ export async function loader({ request }: LoaderFunctionArgs) {
 }
 
 export default function Route() {
-  return <Outlet />;
+  return (
+    <div className="mx-auto h-[calc(100svh_-_theme(spacing.6))] w-full max-w-screen-md overflow-auto rounded-lg bg-black sm:bg-slate-900">
+      <Outlet />
+    </div>
+  );
 }
