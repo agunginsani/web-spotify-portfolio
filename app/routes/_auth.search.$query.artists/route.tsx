@@ -131,13 +131,13 @@ function ArtistCard({ avatar, name, id }: ArtistCard) {
       className="h-ful flex w-full flex-row items-center gap-1 overflow-hidden rounded-none bg-gray-800 p-3 hover:bg-gray-700 lg:w-[175px] lg:flex-col lg:rounded-lg"
     >
       {avatar === null ? (
-        <div className="mr-2 h-full max-h-12 w-full max-w-12 rounded-full lg:mr-0 lg:max-h-[140px] lg:max-w-[140px]" />
+        <div className="mr-2 size-full max-h-12 max-w-12 rounded-full lg:mr-0 lg:max-h-[140px] lg:max-w-[140px]" />
       ) : (
         <img
           src={avatar}
           alt=""
           role="presentation"
-          className="mr-2 h-full max-h-12 w-full max-w-12 rounded-full object-cover lg:mr-0 lg:max-h-[140px] lg:max-w-[140px]"
+          className="mr-2 size-full max-h-12 max-w-12 rounded-full object-cover lg:mr-0 lg:max-h-[140px] lg:max-w-[140px]"
           width={size}
           height={size}
         />
