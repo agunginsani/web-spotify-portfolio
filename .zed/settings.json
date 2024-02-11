@@ -4,6 +4,14 @@
 // see the documentation: https://docs.zed.dev/configuration/configuring-zed#folder-specific-settings
 {
   "language_overrides": {
+    "JSON": {
+      "format_on_save": {
+        "external": {
+          "command": "node_modules/prettier/bin/prettier.cjs",
+          "arguments": ["--stdin-filepath", "{buffer_path}"]
+        }
+      }
+    },
     "JavaScript": {
       "format_on_save": {
         "external": {
