@@ -2,8 +2,13 @@ import { LoaderFunctionArgs, redirect } from "@remix-run/node";
 import { z } from "zod";
 import { credentials } from "~/helpers/cookies.server";
 
-const redirectUri = "http://localhost:3000/login";
+const redirectUri =
+  process.env.NODE_ENV === "production"
+    ? "https://web-spotify-portfolio.fly.dev/login"
+    : "http://localhost:3000/login";
+
 const clientId = z.string().parse(process.env.SPOTIFY_API_CLIENT_ID);
+
 const clientSecret = z.string().parse(process.env.SPOTIFY_API_CLIENT_SECRET);
 
 export async function loader({ request }: LoaderFunctionArgs) {
