@@ -12,17 +12,16 @@ const clientId = z.string().parse(process.env.SPOTIFY_API_CLIENT_ID);
 const clientSecret = z.string().parse(process.env.SPOTIFY_API_CLIENT_SECRET);
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  const cookieHeader = request.headers.get("Cookie");
-  const cookie = (await credentials.parse(cookieHeader)) || {};
-  const referer = z
-    .string()
-    .url()
-    .catch("/")
-    .parse(request.headers.get("Referer"));
-
   const url = new URL(request.url);
   const code = url.searchParams.get("code");
   if (code !== null) {
+    const cookieHeader = request.headers.get("Cookie");
+    const cookie = (await credentials.parse(cookieHeader)) || {};
+    const referer = z
+      .string()
+      .url()
+      .catch("/")
+      .parse(request.headers.get("Referer"));
     const token = await getAccessToken(code);
     cookie.access_token = token;
     return redirect(referer, {
