@@ -17,7 +17,7 @@ export const links: LinksFunction = () => [
 
 export default function App() {
   return (
-    <html lang="en" className="bg-black p-3 text-white">
+    <html lang="en" className="bg-black text-white lg:p-3">
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
