@@ -9,13 +9,7 @@ import type {
   LoaderFunctionArgs,
   MetaFunction,
 } from "@remix-run/node";
-import {
-  Form,
-  useActionData,
-  useLoaderData,
-  useNavigate,
-  useNavigation,
-} from "@remix-run/react";
+import { useFetcher, useLoaderData, useNavigate } from "@remix-run/react";
 import { useEffect } from "react";
 import { z } from "zod";
 import { client } from "~/helpers/network.server";
@@ -67,15 +61,8 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
 
 export default function Route() {
   const { artist } = useLoaderData<typeof loader>();
-  const { dispatch } = useSnackbar();
   const navigate = useNavigate();
-  const data = useActionData<typeof action>();
   const [image] = artist.images;
-
-  useEffect(() => {
-    if (data) dispatch({ type: "show", message: data.message });
-  }, [data]);
-
   return (
     <>
       <header className="flex flex-col gap-1 bg-gradient-to-b from-green-800 via-green-900 to-black px-4 pb-4">
@@ -113,22 +100,30 @@ export default function Route() {
 
 function FollowButton() {
   const { artist, isFollowing } = useLoaderData<typeof loader>();
-  const navigation = useNavigation();
+  const { dispatch } = useSnackbar();
+  const fetcher = useFetcher<typeof action>();
+
+  useEffect(() => {
+    if (fetcher.data && fetcher.state === "idle") {
+      dispatch({ type: "show", message: fetcher.data.message });
+    }
+  }, [dispatch, fetcher.data, fetcher.state]);
+
   return (
-    <Form method={isFollowing ? "DELETE" : "PUT"}>
+    <fetcher.Form method={isFollowing ? "DELETE" : "PUT"}>
       <input type="hidden" name="id" value={artist.id} />
       <button
         name="_action"
         value="follow"
         className="rounded-full border border-white px-4 py-2 text-xs font-bold disabled:border-slate-400 disabled:text-slate-400"
         disabled={
-          navigation.formData?.get("_action") === "follow" &&
-          (navigation.state === "submitting" || navigation.state === "loading")
+          fetcher.formData?.get("_action") === "follow" &&
+          (fetcher.state === "submitting" || fetcher.state === "loading")
         }
       >
         {isFollowing ? "Following" : "Follow"}
       </button>
-    </Form>
+    </fetcher.Form>
   );
 }
 
