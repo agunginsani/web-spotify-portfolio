@@ -11,12 +11,15 @@ import type {
 } from "@remix-run/node";
 import {
   Form,
+  useActionData,
   useLoaderData,
   useNavigate,
   useNavigation,
 } from "@remix-run/react";
+import { useEffect } from "react";
 import { z } from "zod";
 import { client } from "~/helpers/network.server";
+import { useSnackbar } from "~/helpers/snackbar";
 
 const schemeArtist = z.object({
   id: z.string(),
@@ -54,7 +57,7 @@ export async function action({ request }: ActionFunctionArgs) {
     return toggleFollowing({ request, id });
   }
 
-  return null;
+  throw new Response("Something went wrong", { status: 500 });
 }
 
 export const meta: MetaFunction<typeof loader> = ({ data }) => {
@@ -63,10 +66,16 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
 };
 
 export default function Route() {
-  const { artist, isFollowing } = useLoaderData<typeof loader>();
+  const { artist } = useLoaderData<typeof loader>();
+  const { dispatch } = useSnackbar();
   const navigate = useNavigate();
-  const navigation = useNavigation();
+  const data = useActionData<typeof action>();
   const [image] = artist.images;
+
+  useEffect(() => {
+    if (data) dispatch({ type: "show", message: data.message });
+  }, [data]);
+
   return (
     <>
       <header className="flex flex-col gap-1 bg-gradient-to-b from-green-800 via-green-900 to-black px-4 pb-4">
@@ -89,26 +98,9 @@ export default function Route() {
         </span>
         <div className="mt-4 flex justify-between">
           <div className="flex items-center gap-6">
-            <Form method={isFollowing ? "DELETE" : "PUT"}>
-              <input type="hidden" name="id" value={artist.id} />
-              <button
-                name="_action"
-                value="follow"
-                className="rounded-full border border-white px-4 py-2 text-xs font-bold disabled:border-slate-400 disabled:text-slate-400"
-                disabled={
-                  navigation.formData?.get("_action") === "follow" &&
-                  navigation.state === "submitting"
-                }
-              >
-                {isFollowing ? "Following" : "Follow"}
-              </button>
-            </Form>
-            <button>
-              <ShareIcon className="size-6" />
-            </button>
-            <button>
-              <EllipsisVerticalIcon className="size-6" />
-            </button>
+            <FollowButton />
+            <ShareButton />
+            <MoreButton />
           </div>
           <button className="flex size-14 items-center justify-center rounded-full bg-green-500">
             <PlayIcon className="size-6 text-black" />
@@ -116,6 +108,50 @@ export default function Route() {
         </div>
       </header>
     </>
+  );
+}
+
+function FollowButton() {
+  const { artist, isFollowing } = useLoaderData<typeof loader>();
+  const navigation = useNavigation();
+  return (
+    <Form method={isFollowing ? "DELETE" : "PUT"}>
+      <input type="hidden" name="id" value={artist.id} />
+      <button
+        name="_action"
+        value="follow"
+        className="rounded-full border border-white px-4 py-2 text-xs font-bold disabled:border-slate-400 disabled:text-slate-400"
+        disabled={
+          navigation.formData?.get("_action") === "follow" &&
+          (navigation.state === "submitting" || navigation.state === "loading")
+        }
+      >
+        {isFollowing ? "Following" : "Follow"}
+      </button>
+    </Form>
+  );
+}
+
+function ShareButton() {
+  const { dispatch } = useSnackbar();
+  return (
+    <button
+      aria-label="Share"
+      onClick={() => {
+        navigator.clipboard.writeText(location.href);
+        dispatch({ type: "show", message: "Link copied to clipboard" });
+      }}
+    >
+      <ShareIcon className="size-6" />
+    </button>
+  );
+}
+
+function MoreButton() {
+  return (
+    <button aria-label="More">
+      <EllipsisVerticalIcon className="size-6" />
+    </button>
   );
 }
 
@@ -164,5 +200,18 @@ async function toggleFollowing({
       headers: { "Content-Type": "application/json" },
     },
   );
-  return response;
+
+  if (!response.ok) {
+    throw response;
+  }
+
+  if (request.method === "DELETE") {
+    return { message: "Removed to Your Library" };
+  }
+
+  if (request.method === "PUT") {
+    return { message: "Added to Your Library" };
+  }
+
+  throw new Response('Invalid "method"', { status: 500 });
 }
