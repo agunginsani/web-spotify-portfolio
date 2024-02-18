@@ -9,6 +9,7 @@ import {
   ScrollRestoration,
 } from "@remix-run/react";
 import styles from "~/tailwind.css";
+import { Snackbar, SnackbarProvider } from "./helpers/snackbar";
 
 export const links: LinksFunction = () => [
   ...(cssBundleHref ? [{ rel: "stylesheet", href: cssBundleHref }] : []),
@@ -25,7 +26,10 @@ export default function App() {
         <Links />
       </head>
       <body>
-        <Outlet />
+        <SnackbarProvider>
+          <Outlet />
+          <Snackbar />
+        </SnackbarProvider>
         <ScrollRestoration />
         <Scripts />
         <LiveReload />
