@@ -1,4 +1,4 @@
-import type { LoaderFunctionArgs} from "@remix-run/node";
+import type { LoaderFunctionArgs } from "@remix-run/node";
 import { redirect } from "@remix-run/node";
 import { Outlet } from "@remix-run/react";
 import { credentials } from "~/helpers/cookies.server";

@@ -6,7 +6,7 @@
   "scripts": {
     "build": "remix build",
     "dev": "remix dev --manual",
-    "format:check": "bun x prettier --check --debug-check .",
+    "format:check": "bun x prettier --check .",
     "format:write": "bun x prettier --write .",
     "lint": "bun x eslint --ignore-path .gitignore --cache --cache-location ./node_modules/.cache/eslint .",
     "start": "remix-serve ./build/index.js",
