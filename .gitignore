@@ -7,3 +7,7 @@ node_modules
 .dockerignore
 Dockerfile
 fly.toml
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
