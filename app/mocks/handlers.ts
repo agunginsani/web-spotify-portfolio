@@ -19,7 +19,7 @@ export const handlers = [
     });
   }),
   http.get(
-    "https://api.spotify.com/v1/me/following/contains?type=artist&ids=1",
+    "https://api.spotify.com/v1/me/following/contains",
     () => {
       return HttpResponse.json([false]);
     },
