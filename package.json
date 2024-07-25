@@ -6,10 +6,12 @@
   "scripts": {
     "build": "remix vite:build",
     "dev": "remix vite:dev",
+    "dev:test": "remix vite:dev --mode test",
     "format:check": "npx prettier --check .",
     "format:write": "npx prettier --write .",
     "lint": "npx eslint --ignore-path .gitignore --cache --cache-location ./node_modules/.cache/eslint .",
     "start": "remix-serve ./build/server/index.js",
+    "start:test": "VITE_MOCKED_API=true SPOTIFY_API_CLIENT_ID=MOCKED_SPOTIFY_API_CLIENT_ID SPOTIFY_API_CLIENT_SECRET=MOCKED_SPOTIFY_API_CLIENT_SECRET COOKIE_CREDENTIALS_SECRET=MOCKED_COOKIE_CREDENTIALS_SECRET remix-serve ./build/server/index.js",
     "typecheck": "npx tsc"
   },
   "dependencies": {
@@ -48,5 +50,10 @@
   },
   "engines": {
     "node": ">=18.0.0"
+  },
+  "msw": {
+    "workerDirectory": [
+      "public"
+    ]
   }
 }

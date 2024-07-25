@@ -71,7 +71,7 @@ export default defineConfig({
 
   /* Run your local dev server before starting the tests */
   webServer: {
-    command: `MOCKED_API=true SPOTIFY_API_CLIENT_ID=${process.env.SPOTIFY_API_CLIENT_ID} SPOTIFY_API_CLIENT_SECRET=${process.env.SPOTIFY_API_CLIENT_SECRET} COOKIE_CREDENTIALS_SECRET=${process.env.COOKIE_CREDENTIALS_SECRET} npm run start`,
+    command: "npm run start:test",
     url: "http://localhost:3000",
     reuseExistingServer: !process.env.CI,
   },
