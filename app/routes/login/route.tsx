@@ -15,6 +15,7 @@ const clientSecret = z.string().parse(process.env.SPOTIFY_API_CLIENT_SECRET);
 export async function loader({ request }: LoaderFunctionArgs) {
   const url = new URL(request.url);
   const code = url.searchParams.get("code");
+
   if (code !== null) {
     const cookieHeader = request.headers.get("Cookie");
     const cookie = (await credentials.parse(cookieHeader)) || {};
