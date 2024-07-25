@@ -8,11 +8,23 @@ import { RemixBrowser } from "@remix-run/react";
 import { startTransition, StrictMode } from "react";
 import { hydrateRoot } from "react-dom/client";
 
-startTransition(() => {
-  hydrateRoot(
-    document,
-    <StrictMode>
-      <RemixBrowser />
-    </StrictMode>,
-  );
+async function enableMocking() {
+  if (process.env.MOCKED_API !== "true") {
+    return;
+  }
+
+  const { worker } = await import("~/mocks/browser");
+
+  return worker.start();
+}
+
+enableMocking().then(() => {
+  return startTransition(() => {
+    hydrateRoot(
+      document,
+      <StrictMode>
+        <RemixBrowser />
+      </StrictMode>,
+    );
+  });
 });
