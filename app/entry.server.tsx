@@ -11,7 +11,7 @@ import { createReadableStreamFromReadable } from "@remix-run/node";
 import { RemixServer } from "@remix-run/react";
 import { isbot } from "isbot";
 import { renderToPipeableStream } from "react-dom/server";
-import { server } from "./mocks/bun";
+import { server } from "./mocks/node";
 
 if (process.env.MOCKED_API === "true") {
   server.listen();
