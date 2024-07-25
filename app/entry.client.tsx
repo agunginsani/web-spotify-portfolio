@@ -7,15 +7,17 @@
 import { RemixBrowser } from "@remix-run/react";
 import { startTransition, StrictMode } from "react";
 import { hydrateRoot } from "react-dom/client";
+import { z } from "zod";
 
 async function enableMocking() {
-  if (process.env.MOCKED_API !== "true") {
-    return;
+  const mockedApi = z.coerce.boolean().parse(import.meta.env.VITE_MOCKED_API);
+
+  if (mockedApi) {
+    const { worker } = await import("~/mocks/browser");
+    return worker.start();
   }
 
-  const { worker } = await import("~/mocks/browser");
-
-  return worker.start();
+  return;
 }
 
 enableMocking().then(() => {
