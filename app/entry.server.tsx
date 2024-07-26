@@ -11,10 +11,10 @@ import { createReadableStreamFromReadable } from "@remix-run/node";
 import { RemixServer } from "@remix-run/react";
 import { isbot } from "isbot";
 import { renderToPipeableStream } from "react-dom/server";
-import { z } from "zod";
-import { server } from "./mocks/node";
+import { server } from "~/mocks/node";
+import { stringToBoolean } from "~/helpers/parser";
 
-const mockedApi = z.coerce.boolean().parse(process.env.VITE_MOCKED_API);
+const mockedApi = stringToBoolean(process.env.VITE_MOCKED_API);
 
 if (mockedApi) {
   server.listen();
