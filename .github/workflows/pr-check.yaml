@@ -10,6 +10,10 @@ on:
       - main
 env:
   CI: true
+  MOCKED_API: true
+  SPOTIFY_API_CLIENT_ID: ${{ secrets.SPOTIFY_API_CLIENT_ID }}
+  SPOTIFY_API_CLIENT_SECRET: ${{ secrets.SPOTIFY_API_CLIENT_SECRET }}
+  COOKIE_CREDENTIALS_SECRET: ${{ secrets.COOKIE_CREDENTIALS_SECRET }}
 
 jobs:
   main:
