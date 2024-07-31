@@ -94,7 +94,10 @@ export default function Route() {
         {(album) => {
           const items = [...album.items, ...loadMoreItems];
           return (
-            <ul className="flex flex-col flex-wrap justify-between gap-0 lg:flex-row lg:gap-3">
+            <ul
+              className="flex flex-col flex-wrap justify-between gap-0 lg:flex-row lg:gap-3"
+              aria-label="Albums"
+            >
               {items.map((item, index) => {
                 const avatar =
                   item.images.length === 0 ? null : item.images[0].url;
